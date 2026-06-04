@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- ==========================================
+         META TAGS UNTUK TAMPILAN WHATSAPP & SOSMED
+         ========================================== -->
+    <title>Aplikasi Latihan Baca Kitab Kuning Digital</title>
+    <meta property="og:title" content="Aplikasi Latihan Baca Kitab Kuning Digital">
+    <meta property="og:description" content="At-Tadrib Juz 2 : Materi 66. Yuk, uji kemampuan baca kitab gundul Anda di sini!">
+    <meta property="og:image" content="https://yt3.googleusercontent.com/zZioLNSXEkRmAgCKOOM1iKN-NmjVVOPa9KF-Rg51ywYHQs990lRK6jQcOwEM_UWmoJk3vXUbDA=s900-c-k-c0x00ffffff-no-rj">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&display=swap');
+
+        body { font-family: 'Inter', sans-serif; background-color: #fcf8e3; color: #2d3748; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem; text-align: center; transition: background-color 0.3s ease, color 0.3s ease; }
+        .main-content-wrapper { max-width: 80rem; width: 100%; margin-left: auto; margin-right: auto; padding: 0 1rem; }
+        .section-container { background-color: #fff; padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); border: 4px solid #c5b383; margin-bottom: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative; }
+        
+        .tooltip-container { position: relative; display: inline-block; cursor: pointer; line-height: 2.5; margin-inline-end: 0.75rem; font-family: 'Scheherazade New', serif; font-size: 1.875rem; font-weight: 700; }
+        .tooltip-container.active-word, .tooltip-container.show-tooltips, .tooltip-container.force-show-tooltips { z-index: 55; }
+        .tooltip-container.active-word .arabic-text { background-color: #d1fae5; border-radius: 0.3em; padding: 0.2em 0.4em; box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
+        
+        .base-tooltip { visibility: hidden; color: #fff; border-radius: 8px; padding: 6px 10px; position: absolute; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s, visibility 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 100; font-family: 'Inter', sans-serif; pointer-events: none !important; }
+        
+        /* WARNA BACKGROUND TOOLTIP DISAMAKAN (#333) */
+        .irab-tooltip { bottom: 95%; background-color: #333; direction: rtl; text-align: right; font-size: 0.95rem; font-family: 'Scheherazade New', serif; white-space: normal; width: max-content; max-width: 500px; line-height: 1.9; padding: 9px 16px; word-break: break-word; }
+        .irab-tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent; }
+        .translation-tooltip { top: 95%; background-color: #333; direction: ltr; font-size: 0.85rem; text-align: center; white-space: normal; width: max-content; max-width: 360px; font-family: 'Inter', sans-serif; padding: 8px 12px; line-height: 1.6; word-break: break-word; }
+        .translation-tooltip::after { content: ""; position: absolute; bottom: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: transparent transparent #333 transparent; }
+        .tafsir-top-tooltip { bottom: 95%; background-color: #333; direction: ltr; font-size: 0.75rem; text-align: center; white-space: normal; width: max-content; max-width: 320px; font-family: 'Inter', sans-serif; word-break: break-word; }
+        .tafsir-top-tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent; }
+        
+        body.irab-enabled .tooltip-container.show-tooltips .irab-tooltip, 
+        body.translation-enabled .tooltip-container.show-tooltips .translation-tooltip, 
+        .tooltip-container.force-show-tooltips .base-tooltip { 
+            visibility: visible !important; 
+            opacity: 1 !important; 
+            display: block !important;
+        }
+
+        #quizInteractionArea { position: absolute; padding: 0.75rem; background-color: #f0ead6; border-radius: 1rem; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align: center; border: 2px dashed #c5b383; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; z-index: 50; min-width: 200px; }
+        #quizInteractionArea.active { opacity: 1; visibility: visible; }
+        
+        .options-container { display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: center; gap: 0.5rem; }
+        .options-container button { transition: background-color 0.2s ease-in-out, transform 0.1s ease-out, color 0.3s ease; direction: rtl; font-family: 'Scheherazade New', serif; font-size: 1.25rem; font-weight: bold; padding: 0.5rem 1rem; border-radius: 0.75rem; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); text-align: center; width: 100%; background-color: #e0e0e0; color: #333; border: none; }
+        .options-container button:hover:not(:disabled) { transform: translateY(-3px); background-color: #d0d0d0; }
+        .options-container button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .tooltip-container .arabic-text.answered-word { background-color: #cbd5e0; color: #2d3748; padding: 0.2em 0.4em; border-radius: 0.3em; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tooltip-container .arabic-text.correct-guess { background-color: #22c55e !important; color: #ffffff !important; padding: 0.2em 0.4em; border-radius: 0.3em; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .tooltip-container .arabic-text.incorrect-guess { background-color: #dc2626 !important; color: #ffffff !important; padding: 0.2em 0.4em; border-radius: 0.3em; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .tooltip-container .arabic-text.unanswered-neutral { background-color: #e2e8f0 !important; color: #64748b !important; border: 1px dashed #cbd5e0; padding: 0.2em 0.4em; border-radius: 0.3em; }
+
+        .arabic-punctuation { font-family: 'Scheherazade New', serif; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 100; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-content { background-color: #fff; max-width: 90%; max-height: 90vh; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow-y: auto; transform: scale(0.9); transition: transform 0.3s ease; }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        .progress-bar-container { width: 100%; background-color: #e5e7eb; }
+        .progress-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.5s ease-in-out; }
+
+        @keyframes shine { 0% { transform: translateX(-100%) skewX(-30deg); } 100% { transform: translateX(200%) skewX(-30deg); } }
+        @keyframes bounceRight { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+
+        .resume-marker { position: relative; z-index: 20; }
+        .resume-marker::after { content: attr(data-marker-text); position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 10px; background-color: #0d9488; color: white; font-size: 0.75rem; font-family: 'Inter', sans-serif; padding: 2px 8px; border-radius: 4px; white-space: nowrap; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); pointer-events: none; animation: bounceRight 1s infinite ease-in-out; display: none; }
+        .resume-marker .arabic-text { border: 2px dashed #0d9488; box-shadow: 0 0 10px rgba(13, 148, 136, 0.3); animation: pulseBorder 2s infinite; }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(13, 148, 136, 0); } 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); } }
+        @media (min-width: 768px) { .resume-marker::after { display: block; } }
+
+        .logo-container { position: relative; margin-left: auto; margin-right: auto; overflow: hidden; border-radius: 50%; transform: translateZ(0); }
+        .logo-anim { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .logo-container::after { content: ""; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); z-index: 10; animation: shine 2s infinite linear; }
+
+        @media (max-width: 768px) {
+            body { padding: 0.5rem; }
+            .main-content-wrapper { padding: 0; }
+            .section-container { padding: 1.25rem; margin-bottom: 2rem; }
+            .tooltip-container { font-size: 1.5rem; margin-inline-end: 0.4rem; }
+            .irab-tooltip, .translation-tooltip { font-size: 0.875rem; padding: 6px 10px; }
+            .options-container button { font-size: 1.5rem; padding: 0.75rem 1rem; }
+            .control-btn { width: 100%; }
+        }
+
+        .name-input-field { width: 100%; padding: 0.75rem 1rem; border: 2px solid #c5b383; border-radius: 0.75rem; outline: none; font-size: 1rem; transition: all 0.2s; text-align: center; }
+        .name-input-field:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); }
+        
+        @keyframes bounce-subtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .animate-bounce-subtle { animation: bounce-subtle 2s infinite ease-in-out; }
+
+        /* Loader Animation */
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #0d9488; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .token-option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; font-family: 'Inter', sans-serif;}
+        .token-option-card { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: #f8fafc; }
+        .token-option-card:hover { border-color: #0d9488; background: #f0fdfa; transform: translateY(-2px); }
+        .token-option-amount { font-size: 1.1rem; font-weight: 900; color: #0f766e; margin-bottom: 4px; }
+        .token-option-price { font-size: 0.85rem; color: #4a5568; font-weight: 700; }
+
+        .toast-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #1a202c; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 99999999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease; font-family: 'Inter', sans-serif;}
+        .toast-container.active { opacity: 1; transform: translate(-50%, -5px); }
+        .toast-icon { color: #25D366; }
+
+        /* ===== OVERLAY LOGIN GATE ===== */
+        #loginGate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 1rem;
+        }
+        #loginGate.hidden { display: none; }
+        @keyframes fadeInScale { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+        #loginGateCard { animation: fadeInScale 0.3s ease; }
+    </style>
+</head>
+<body class="bg-[#fcf8e3] flex flex-col items-center justify-start min-h-screen p-4 md:p-8">
+
+    <!-- ===== OVERLAY WAJIB LOGIN ===== -->
+    <div id="loginGate" class="hidden">
+        <div id="loginGateCard" class="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-2xl border-4 border-teal-100">
+            <div class="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i class="fas fa-lock text-4xl text-teal-600"></i>
+            </div>
+            <h3 class="font-bold text-2xl text-gray-800 mb-2" style="font-family:'Lora',serif;">Masuk Dulu, Ya!</h3>
+            <p class="text-sm text-gray-500 mb-2 leading-relaxed">Harap login agar jawaban Anda <b>tersimpan</b> dan bisa dikirim ke Guru.</p>
+            <p class="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-6">
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                Tanpa login, jawaban yang sudah dikerjakan akan hilang saat halaman ditutup.
+            </p>
+            <a href="https://www.pustakangaji.com/#daftar"
+               class="block w-full font-bold py-3.5 rounded-xl transition text-base shadow-sm border-2 border-teal-600 hover:bg-teal-50"
+               style="background:#ffffff; color:#0d9488;">
+                <i class="fas fa-sign-in-alt mr-2"></i> Masuk / Daftar Akun
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content-wrapper">
+        <div class="section-container" id="tebak-cara-baca-section">
+            
+            <!-- HEADER -->
+            <div class="text-center mb-8 pb-4">
+                <div class="flex justify-center items-center gap-4 mb-4">
+                    <a href="https://www.pustakangaji.com/" title="Beranda" class="transition-transform hover:scale-110 duration-300 block">
+                        <div class="logo-container h-28 w-28 border-4 border-white drop-shadow-md rounded-full">
+                            <img class="logo-anim rounded-full" src="https://yt3.googleusercontent.com/zZioLNSXEkRmAgCKOOM1iKN-NmjVVOPa9KF-Rg51ywYHQs990lRK6jQcOwEM_UWmoJk3vXUbDA=s900-c-k-c0x00ffffff-no-rj" alt="Logo RUANG NGAJI">
+                        </div>
+                    </a>
+                </div>
+                <h1 class="text-xl md:text-3xl font-bold text-[#2F7C73] mb-1" style="font-family: 'Lora', serif;">Aplikasi Latihan Baca Kitab Kuning Digital</h1>
+                <div class="inline-flex items-center justify-center px-3 py-1 md:px-5 md:py-1.5 mt-3 bg-[#e0f2f1] border border-[#80cbc4] rounded-full shadow-sm">
+                    <i class="fas fa-book-open text-[#2F7C73] mr-1.5 md:mr-2.5 text-xs md:text-sm"></i>
+                    <span id="materialTitleDisplay" class="text-[#004d40] font-bold text-sm md:text-lg tracking-wide" style="font-family: 'Lora', serif;">
+                        At-Tadrib Juz 2 : Materi 66
+                    </span>
+                </div>
+            </div>
+
+            <!-- KONTROL MODE -->
+            <div class="flex flex-col sm:flex-row flex-wrap justify-center items-stretch w-full gap-3 mb-6 relative z-50 max-w-4xl mx-auto px-1 md:px-4">
+                
+                <div class="relative flex-1 w-full sm:w-auto min-w-[140px]">
+                    <button id="menuDropdownBtn" class="w-full h-full bg-slate-600 text-white py-3 px-4 text-sm font-bold rounded-xl shadow-md hover:bg-slate-700 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-bars"></i> <span>Menu</span>
+                    </button>
+                    <div id="menuDropdownContent" class="hidden absolute left-0 right-0 sm:right-auto sm:w-72 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden transform origin-top transition-all duration-200 text-left z-[60]">
+                        <div id="token-pill-menu" class="border-b border-gray-200 bg-gray-50/80"></div>
+                        <div class="p-2 space-y-1">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 py-2">Navigasi</p>
+                            <button id="showTutorialBtn" class="w-full text-left px-3 py-2 rounded-lg hover:bg-amber-50 text-gray-700 hover:text-amber-600 transition flex items-center gap-3 text-sm font-semibold">
+                                <i class="fas fa-question-circle w-5 text-center text-amber-500"></i> Panduan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="modeUjianBtn" class="flex-1 w-full sm:w-auto min-w-[140px] bg-blue-600 text-white py-3 px-4 text-sm font-bold rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-graduation-cap"></i> <span>Mode Belajar</span>
+                </button>
+
+                <button id="showResultBtn" class="flex-1 w-full sm:w-auto min-w-[140px] bg-teal-600 text-white py-3 px-4 text-sm font-bold rounded-xl shadow-md hover:bg-teal-700 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>
+                </button>
+
+                <button id="resetGameBtn" class="flex-1 w-full sm:w-auto min-w-[140px] bg-red-500 text-white py-3 px-4 text-sm font-bold rounded-xl shadow-md hover:bg-red-600 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-redo-alt"></i> <span>Mulai Ulang</span>
+                </button>
+            </div>
+            
+            <!-- PROGRESS BAR -->
+            <div id="progressContainer" class="w-full max-w-4xl mx-auto mb-8 px-2 md:px-0">
+                <div class="flex justify-between mb-1">
+                    <span class="text-sm font-bold text-teal-700 flex items-center gap-2"><i class="fas fa-tasks"></i> Progres Latihan</span>
+                    <span class="text-sm font-bold text-teal-700" id="progressText">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner border border-gray-300 relative overflow-hidden">
+                    <div class="bg-teal-500 h-3 rounded-full transition-all duration-700 ease-out" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- PARAGRAF TEKS KITAB -->
+            <div class="space-y-8">
+<p dir="rtl" style="direction: rtl;" class="leading-relaxed text-justify text-3xl font-bold font-scheherazade" id="guess-text-paragraph">
+<span class="tooltip-container guess-word" data-unvocalized="(ومن" data-correct-vocalization="وَمَنْ" data-options='["وَمَنْ", "وَمِنَ", "وَمِنْ"]' data-irab="حرف استئناف/اسم شرط في محل رفع مبتدأ" data-translation="dan barang siapa"><span class="arabic-text">(ومن</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="دخل)" data-correct-vocalization="دَخَلَ" data-options='["دَخَلَ", "دُخِلَ", "دَخِلَ"]' data-irab="فعل ماض/والفاعل ضمير مستتر/والجملة الفعلية في محل رفع خبر" data-translation="ia masuk"><span class="arabic-text">دخل)</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="المسجد" data-correct-vocalization="الْمَسْجِدَ" data-options='["الْمَسْجِدَ", "الْمَسَجِدَ", "الْمَسْجِدِ"]' data-irab="مفعول به" data-translation="masjid"><span class="arabic-text">المسجد</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="(والإمام" data-correct-vocalization="وَالْإِمَامُ" data-options='["وَالْإِمَامُ", "وَالْإِمَامَ", "وَالْإِمَامِ"]' data-irab="واو الحال/مبتدأ" data-translation="sedangkan imam"><span class="arabic-text">(والإمام</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="يخطب" data-correct-vocalization="يَخْطُبُ" data-options='["يَخْطُبُ", "يَخْطَبُ", "يُخْطِبُ"]' data-irab="فعل مضارع مرفوع/والفاعل ضمير مستتر" data-translation="ia berkhutbah"><span class="arabic-text">يخطب</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="صلى" data-correct-vocalization="صَلَّى" data-options='["صَلَّى", "صَلَى", "صَلِّى"]' data-irab="فعل ماض/والفاعل ضمير مستتر/وجملتا الشرط والجواب خبر المبتدأ" data-translation="ia hendaknya shalat"><span class="arabic-text">صلى</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="ركعتين" data-correct-vocalization="رَكْعَتَيْنِ" data-options='["رَكْعَتَيْنِ", "رَكْعَتِيْنَ", "رَكَعَتَيْنِ"]' data-irab="مفعول مطلق" data-translation="dua rakaat"><span class="arabic-text">ركعتين</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="خفيفتين" data-correct-vocalization="خَفِيفَتَيْنِ" data-options='["خَفِيفَتَيْنِ", "خَفِيْفَتِيْنِ", "خُفِيْفَتَيْنِ"]' data-irab="نعت" data-translation="yang keduanya ringkas"><span class="arabic-text">خفيفتين</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="ثم يجلس)." data-correct-vocalization="ثُمَّ يَجْلِسُ" data-options='["ثُمَّ يَجْلِسُ", "ثُمَّ يُجْلِسُ", "ثَمَّ يَجْلِسُ"]' data-irab="حرف عطف/فعل مضارع/والفاعل ضمير مستتر" data-translation="kemudian ia duduk"><span class="arabic-text">ثم يجلس).</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="وتعبير" data-correct-vocalization="وَتَعْبِيْرُ" data-options='["وَتَعْبِيْرُ", "وَتَعْبِيْرَ", "وَتَعْبِيْرِ"]' data-irab="حرف استىئناف/مبتدأ" data-translation="dan ungkapan"><span class="arabic-text">وتعبير</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="المصنف" data-correct-vocalization="الْمُصَنِّفِ" data-options='["الْمُصَنِّفِ", "الْمُصَنَّفُ", "الْمُصَنِّفَ"]' data-irab="مضاف إليه" data-translation="penyusun"><span class="arabic-text">المصنف</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="بـ «دخل»" data-correct-vocalization="بِـ دَخَلَ" data-options='["بِـ دَخَلَ", "بِـ «دَخَلٍ»", "بِـ «دَخَلِ»"]' data-irab="جار مجرور بحركة الحكاية" data-translation="dengan kata 'masuk'"><span class="arabic-text">بـ «دخل»</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="يفهم" data-correct-vocalization="يُفْهِمُ" data-options='["يُفْهِمُ", "يَفْهَمُ", "يُفْهَمُ"]' data-irab="فعل مضارع/والفاعل ضمير مستتر/والجملة الفعلية في محل رفع خبر" data-translation="ia memberi pemahaman"><span class="arabic-text">يفهم</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="أن" data-correct-vocalization="أَنَّ" data-options='["أَنَّ", "أَنِ", "أَنْ"]' data-irab="حرف توكيد ونصب تنصب الاسم وترفع الخبر" data-translation="sesungguhnya"><span class="arabic-text">أن</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="الحاضر" data-correct-vocalization="الْحَاضِرَ" data-options='["الْحَاضِرَ", "الْحَاضَرِ", "الْحَاضِرِ"]' data-irab="اسمها" data-translation="orang yang hadir"><span class="arabic-text">الحاضر</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="لا ينشئ" data-correct-vocalization="لَا يُنْشِئُ" data-options='["لَا يُنْشِئُ", "لَا يَنْشَئُ", "لَا يُنْشَئُ"]' data-irab="حرف نفي/فعل مضارع مرفوع/والفاعل ضمير مستتر/والمصدر المؤوّل من أنّ واسمها وخبرها في محل نصب مفعول به/والجملة الفعلية في محل رفع خبرها" data-translation="dia tidak memulai"><span class="arabic-text">لا ينشئ</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="صلاة" data-correct-vocalization="صَلَاةَ" data-options='["صَلَاةَ", "صَلَاةُ", "صَلَاةً"]' data-irab="مفعول به" data-translation="shalat"><span class="arabic-text">صلاة</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="ركعتين،" data-correct-vocalization="رَكْعَتَيْنِ" data-options='["رَكْعَتَيْنِ", "رَكَعَتَيْنِ", "رَكْعَتَيْنَ"]' data-irab="مضاف إليه" data-translation="dua raka'at"><span class="arabic-text">ركعتين،</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="سواء" data-correct-vocalization="سَوَاءٌ" data-options='["سَوَاءٌ", "سُوَاءً", "سَوَّاءٍ"]' data-irab="خبر لمبتدأ محذوف" data-translation="baik itu"><span class="arabic-text">سواء</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="صلى" data-correct-vocalization="صَلَّى" data-options='["صَلَّى", "صَلِّى", "صَلَى"]' data-irab="فعل ماض/والفاعل ضمير مستتر" data-translation="ia telah melaksanakan salat"><span class="arabic-text">صلى</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="سنة" data-correct-vocalization="سُنَّةَ" data-options='["سُنَّةَ", "سُنَّةٌ", "سُنَةَ"]' data-irab="مفعول به" data-translation="salat sunnah"><span class="arabic-text">سنة</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="الجمعة" data-correct-vocalization="الْجُمُعَةِ" data-options='["الْجُمُعَةِ", "الْجُمُعَةُ", "الْجُمُعَةَ"]' data-irab="مضاف إليه" data-translation="jum'at"><span class="arabic-text">الجمعة</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="أم لا." data-correct-vocalization="أَمْ لَا" data-options='["أَمْ لَا", "أَمَّ لَا", "أَمَ لَا"]' data-irab="حرف عطف/حرف نفي" data-translation="ataupun tidak"><span class="arabic-text">أم لا.</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="ولا" data-correct-vocalization="وَلَا" data-options='["وَلَا", "وَلَّا", "وِلَا"]' data-irab="حرف استئناف/حرف نفي" data-translation="dan tidak"><span class="arabic-text">ولا</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="يظهر" data-correct-vocalization="يَظْهَرُ" data-options='["يَظْهَرُ", "يَظْهِرُ", "يَظْهُرُ"]' data-irab="فعل مضارع مرفوع" data-translation="tampak"><span class="arabic-text">يظهر</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="من هذا" data-correct-vocalization="مِنْ هَذَا" data-options='["مِنْ هَذَا", "مَنْ هَذَا", "مَنِ هَذَا"]' data-irab="جار مجرور" data-translation="dari ini"><span class="arabic-text">من هذا</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="المفهوم" data-correct-vocalization="الْمَفْهُوْمِ" data-options='["الْمَفْهُوْمِ", "الْمَفْهُوْمُ", "الْمَفْهُوْمَ"]' data-irab="بدل" data-translation="pemahaman implisit"><span class="arabic-text">المفهوم</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="أن" data-correct-vocalization="أَنَّ" data-options='["أَنَّ", "أَنِ", "أَنِّ"]' data-irab="حرف توكيد ونصب تنصب الاسم وترفع الخبر" data-translation="sesungguhnya"><span class="arabic-text">أن</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="فعلهما" data-correct-vocalization="فِعْلَهُمَا" data-options='["فِعْلَهُمَا", "فِعْلُهُمَا", "فِعْلِهِمَا"]' data-irab="اسمها/إضافة/والمصدر المؤوّل من أنّ واسمها وخبرها في محل رفع فاعل" data-translation="melakukan keduanya"><span class="arabic-text">فعلهما</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="حرام" data-correct-vocalization="حَرَامٌ" data-options='["حَرَامٌ", "حَرَامُ", "حَرَامٍ"]' data-irab="خبرها" data-translation="haram"><span class="arabic-text">حرام</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="أو مكروه،" data-correct-vocalization="أَوْ مَكْرُوْهٌ" data-options='["أَوْ مَكْرُوْهٌ", "أَوْ مَكْرُوْهٍ", "أَوْ مَكْرُوْهُ"]' data-irab="حرف عطف/معطوف" data-translation="atau makruh"><span class="arabic-text">أو مكروه،</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="لكن" data-correct-vocalization="لَكِنَّ" data-options='["لَكِنَّ", "لَكَنَ", "لَكِنِ"]' data-irab="حرف استدراك ونصب تنصب الاسم وترفع الخبر" data-translation="akan tetapi"><span class="arabic-text">لكن</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="النووي" data-correct-vocalization="النَّوَوِيَّ" data-options='["النَّوَوِيَّ", "النَّوَوِيْ", "النَّوَوِيَ"]' data-irab="اسمها" data-translation="Imam Al-Nawawi"><span class="arabic-text">النووي</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="في الشرح" data-correct-vocalization="فِي الشَّرْحِ" data-options='["فِي الشَّرْحِ", "فِي الشِّرْحِ", "فِي الشَّرَحِ"]' data-irab="جار مجرور" data-translation="dalam kitab syarah"><span class="arabic-text">في الشرح</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="المهذب" data-correct-vocalization="الْمُهَذَّبِ" data-options='["الْمُهَذَّبِ", "الْمُهَذَّبُ", "الْمُهَذَّبَ"]' data-irab="مضاف إليه" data-translation="Al-Muhadzdzab"><span class="arabic-text">المهذب</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="صرح" data-correct-vocalization="صَرَّحَ" data-options='["صَرَّحَ", "صَرَحَ", "صَرِحَ"]' data-irab="فعل ماض/والفاعل ضمير مستتر/والجملة الفعلية في محل رفع خبرها" data-translation="ia menegaskan"><span class="arabic-text">صرح</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="بالحرمة،" data-correct-vocalization="بِالْحُرْمَةِ" data-options='["بِالْحُرْمَةِ", "بِالْحُرْمَةَ", "بِالْحَرَمَةِ"]' data-irab="جار مجرور" data-translation="dengan keharaman"><span class="arabic-text">بالحرمة،</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="ونقل" data-correct-vocalization="وَنَقَلَ" data-options='["وَنَقَلَ", "وَنُقِلَ", "وَنَقْلَ"]' data-irab="فعل ماض/والفاعل ضمير مستتر " data-translation="dan ia mengutip"><span class="arabic-text">ونقل</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="الإجماع" data-correct-vocalization="الْإِجْمَاعَ" data-options='["الْإِجْمَاعَ", "الْإِجْمَاعُ", "الْإِجْمَاعِ"]' data-irab="مفعول به" data-translation="akan kesepakatan ulama'"><span class="arabic-text">الإجماع</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="عليها" data-correct-vocalization="عَلَيْهَا" data-options='["عَلَيْهَا", "عَلَيِّهَا", "عِلَيْهَا"]' data-irab="جار مجرور" data-translation="atas keharaman tersebut"><span class="arabic-text">عليها</span></span>
+<span class="tooltip-container guess-word" data-unvocalized="عن الماوردي." data-correct-vocalization="عَنِ الْمَاوَرْدِيِّ" data-options='["عَنِ الْمَاوَرْدِيِّ", "عَنِ الْمَاوَرْدِيِ", "عَنِّ الْمَاوَرْدِيْ"]' data-irab="جار مجرور" data-translation="dari Imam Al-Mawardi"><span class="arabic-text">عن الماوردي.</span></span>
+</p>
+
+            </div>
+
+            <!-- INTERAKSI KUIS -->
+            <div id="quizInteractionArea">
+                <div id="hintActionArea" class="mb-4">
+                    <button id="peekHintBtn" class="w-full bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold py-2 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm border border-amber-200">
+                        <i class="fas fa-eye"></i> Lihat Kisi-Kisi
+                    </button>
+                </div>
+                <div class="options-container" id="currentQuizOptions"></div>
+                <div id="deleteAnswerContainer" class="hidden mt-3 pt-3 border-t border-gray-300">
+                    <button id="deleteAnswerBtn" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-2 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                        <i class="fas fa-trash-alt"></i> Hapus Jawaban
+                    </button>
+                </div>
+                <div class="feedback-message mt-4 text-lg font-semibold" id="currentQuizFeedback"></div>
+            </div>
+
+            <div class="mt-8 w-full text-center">
+                <p class="text-sm font-semibold text-gray-500">&copy; <span id="copyrightYear"></span> Ruang Ngaji Online</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PANDUAN -->
+    <div id="tutorialModal" class="modal-overlay">
+        <div class="modal-content w-full md:max-w-2xl p-6 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Panduan</h2>
+            <p id="tutorialText" class="text-gray-700 text-left"></p>
+            <button id="closeTutorialBtn" class="mt-6 bg-teal-600 text-white px-6 py-2 rounded-lg">Tutup</button>
+        </div>
+    </div>
+
+    <div id="unfinishedModal" class="modal-overlay">
+        <div class="modal-content w-full max-w-md p-6 text-center rounded-2xl">
+             <i class="fas fa-exclamation-triangle text-3xl text-yellow-600 mb-4"></i>
+             <h2 class="text-2xl font-bold text-gray-800 mb-2">Belum Mulai Latihan</h2>
+             <p class="text-gray-600 text-sm mb-6">Harap jawab minimal satu kata sebelum mengirim Hasil Latihan.</p>
+             <button id="closeUnfinishedBtn" class="w-full bg-teal-600 text-white py-3 rounded-xl">Lanjutkan</button>
+        </div>
+    </div>
+
+    <!-- MODAL PENAWARAN KISI-KISI -->
+    <div id="hintOfferModal" class="modal-overlay">
+        <div class="modal-content w-full max-w-sm p-6 text-center rounded-2xl relative shadow-2xl">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="window.closeHintOfferModal()">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="w-16 h-16 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl animate-bounce-subtle">
+                <i class="fas fa-key"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-2 text-gray-800">Aktifkan Semua Kisi-Kisi?</h3>
+            <p class="text-sm text-gray-600 mb-6 px-2">Batas 3 kisi-kisi gratis Anda telah habis. Gunakan <b>2 Poin</b> untuk membuka seluruh kisi-kisi (I'rab & Terjemahan) di latihan ini secara tak terbatas.</p>
+            <div class="flex gap-3">
+                <button onclick="window.closeHintOfferModal()" class="w-1/2 border-2 border-gray-300 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-100 transition text-sm">Batal</button>
+                <button id="confirmUnlockHintsBtn" class="w-1/2 bg-teal-600 text-white py-3 rounded-xl font-bold hover:bg-teal-700 flex justify-center items-center gap-2 transition text-sm shadow-md">
+                    <i class="fas fa-unlock"></i> Aktifkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TOPUP -->
+    <div id="zoomTopupModal" class="modal-overlay">
+        <div class="modal-content w-full max-w-md p-6 text-center rounded-2xl relative">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="document.getElementById('zoomTopupModal').classList.remove('open')">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div id="topup-view-selection">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Isi Ulang Poin</h2>
+                <p class="text-sm text-gray-500 mb-4">Pilih paket poin di bawah (pembayaran via Transfer BRI).</p>
+                <div class="token-option-grid">
+                    <div class="token-option-card" onclick="window.selectTokenPackage(5,5000)"><div class="token-option-amount">5 Poin</div><div class="token-option-price">Rp 5.000</div></div>
+                    <div class="token-option-card" onclick="window.selectTokenPackage(12,10000)"><div class="token-option-amount">12 Poin</div><div class="token-option-price">Rp 10.000</div></div>
+                    <div class="token-option-card" onclick="window.selectTokenPackage(25,20000)"><div class="token-option-amount">25 Poin</div><div class="token-option-price">Rp 20.000</div></div>
+                    <div class="token-option-card" onclick="window.selectTokenPackage(60,50000)"><div class="token-option-amount">60 Poin</div><div class="token-option-price">Rp 50.000</div></div>
+                    <div class="token-option-card" onclick="window.selectTokenPackage(130,100000)"><div class="token-option-amount">130 Poin</div><div class="token-option-price">Rp 100.000</div></div>
+                    <div class="token-option-card" onclick="window.selectTokenPackage(200,150000)"><div class="token-option-amount">200 Poin</div><div class="token-option-price">Rp 150.000</div></div>
+                </div>
+            </div>
+            <div id="topup-view-transfer" style="display:none; text-align:left;">
+                <button onclick="window.showTopUpSelection()" class="text-sm text-teal-600 font-bold mb-4 flex items-center gap-1 hover:text-teal-800"><i class="fas fa-arrow-left"></i> Kembali</button>
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Selesaikan Pembayaran</h2>
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4">
+                    <p class="text-xs text-gray-500 font-bold mb-1">PAKET YANG DIPILIH</p>
+                    <div class="flex justify-between items-center"><span id="transfer-selected-pack" class="font-bold text-teal-700 text-lg">- Poin</span><span id="transfer-selected-price" class="font-bold text-gray-800 text-lg">Rp -</span></div>
+                </div>
+                <div class="bg-teal-50 border-2 border-teal-100 rounded-xl p-4 mb-6">
+                    <p class="text-sm text-teal-800 font-bold mb-2">Silakan Transfer Ke:</p>
+                    <span class="bg-blue-800 text-white px-2 py-1 rounded text-xs font-bold mb-3 inline-block">BANK BRI</span>
+                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 mb-2">
+                        <div><span class="text-xs text-gray-500 block">No. Rekening</span><strong class="text-lg text-gray-800">343701041612531</strong></div>
+                        <button onclick="navigator.clipboard.writeText('343701041612531'); window.showToast('Disalin!','#25D366');" class="text-teal-600 bg-teal-50 px-3 py-2 rounded-lg text-xs font-bold hover:bg-teal-100"><i class="far fa-copy"></i> Salin</button>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-gray-200"><span class="text-xs text-gray-500 block">Atas Nama</span><strong class="text-sm text-gray-800">Yayasan Ruang Ngaji Kita</strong></div>
+                </div>
+                <a id="wa-confirm-btn" href="#" target="_blank" class="w-full bg-[#128C7E] hover:bg-[#075E54] font-bold py-3 rounded-xl transition flex justify-center items-center gap-2" style="color: #ffffff !important;">
+                    <i class="fab fa-whatsapp text-lg"></i> Konfirmasi via WA
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast-container" id="toast-notif">
+        <i class="fas fa-check-circle toast-icon"></i><span id="toast-message">Berhasil</span>
+    </div>
+
+    <script type="module">
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, increment, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBb5OJe1CVsHUd0OVlq40hLlH8YGiT-QOQ",
+            authDomain: "kelas-zoom.firebaseapp.com",
+            projectId: "kelas-zoom",
+            storageBucket: "kelas-zoom.firebasestorage.app",
+            messagingSenderId: "794395293769",
+            appId: "1:794395293769:web:6cb81c9f6dbe85859ee798"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'at-tadrib-online';
+        const MATERIAL_ID = "AT2-67";
+        const LOGIN_URL = "https://www.pustakangaji.com/#daftar";
+
+        window.currentUser = null;
+        window.userTokens = 0;
+        window.firestoreUsername = "";
+        window.firestoreAddress = "";
+        window.firestoreWhatsapp = "";
+        window.firestorePhotoURL = "";
+        window.unsubscribeRealtime = null;
+
+        // ==============================
+        // UTILITIES
+        // ==============================
+        window.shuffleArray = function(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        };
+
+        window.normalizeArabic = function(text) {
+            if (!text) return "";
+            return text.trim().normalize('NFC');
+        };
+
+        window.showToast = function(msg, color='#25D366') {
+            const t = document.getElementById('toast-notif');
+            if (!t) return;
+            const m = document.getElementById('toast-message');
+            const i = t.querySelector('.toast-icon');
+            m.innerText = msg;
+            i.style.color = color;
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 3500);
+        };
+
+        window.redirectToLogin = () => { window.location.href = LOGIN_URL; };
+
+        // ==============================
+        // WIDGET MENU
+        // ==============================
+        window.renderAuthWidget = () => {
+            const w = document.getElementById('token-pill-menu');
+            if (!w) return;
+            if (window.currentUser) {
+                const sEmail = window.currentUser.email || '';
+                const dName = window.firestoreUsername || (sEmail ? sEmail.split('@')[0] : 'Siswa');
+                const ltr = dName.charAt(0).toUpperCase();
+                const avatarSrc = window.firestorePhotoURL
+                    ? `<img src="${window.firestorePhotoURL}" class="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-teal-200" onerror="this.outerHTML='<div class=\'w-10 h-10 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-lg flex-shrink-0\'>${ltr}</div>'">`
+                    : `<div class="w-10 h-10 rounded-full bg-teal-700 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">${ltr}</div>`;
+                w.innerHTML = `<div class="p-4 flex flex-col gap-3">
+                    <div class="flex items-center gap-3">
+                        ${avatarSrc}
+                        <div class="overflow-hidden flex-1">
+                            <p class="text-sm font-bold text-gray-800 truncate leading-tight">${dName}</p>
+                            <button onclick="window.doLogout()" class="text-xs text-red-500 font-bold hover:text-red-700 transition">Keluar Akun</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-teal-50 border border-teal-200 px-3 py-2.5 rounded-lg shadow-inner">
+                        <div class="flex items-center gap-2 text-teal-900 font-bold text-sm">
+                            <i class="fas fa-coins text-amber-500 text-lg"></i>
+                            <span>${window.userTokens} Poin</span>
+                        </div>
+                        <button onclick="document.getElementById('menuDropdownContent').classList.add('hidden'); document.getElementById('zoomTopupModal').classList.add('open')" class="bg-amber-500 hover:bg-amber-600 text-white w-7 h-7 rounded-full flex items-center justify-center transition shadow-md" title="Isi Ulang Poin">
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>`;
+            } else {
+                w.innerHTML = `<div class="p-4">
+                    <a href="${LOGIN_URL}" class="w-full font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition text-sm" style="background:#ffffff;color:#0f766e;border:2px solid #0f766e;">
+                        <i class="fas fa-sign-in-alt"></i> Masuk / Daftar Akun
+                    </a>
+                </div>`;
+            }
+        };
+
+        // ==============================
+        // LOGOUT
+        // ==============================
+        window.doLogout = async () => {
+            document.getElementById('menuDropdownContent').classList.add('hidden');
+            try {
+                await signOut(auth);
+                window.currentUser = null; window.userTokens = 0;
+                window.firestoreUsername = ''; window.firestoreAddress = '';
+                window.firestoreWhatsapp = ''; window.firestorePhotoURL = '';
+                if (window.unsubscribeRealtime) { window.unsubscribeRealtime(); window.unsubscribeRealtime = null; }
+                window.renderAuthWidget();
+                window.showToast('Berhasil keluar.', '#ef6c00');
+            } catch (err) {}
+        };
+
+        // ==============================
+        // TOPUP
+        // ==============================
+        window.selectTokenPackage = (a, p) => {
+            document.getElementById('transfer-selected-pack').innerText = `${a} Poin`;
+            document.getElementById('transfer-selected-price').innerText = `Rp ${p.toLocaleString('id-ID')}`;
+            document.getElementById('wa-confirm-btn').href = `https://wa.me/6287806934636?text=${encodeURIComponent(`Halo Admin, konfirmasi transfer Ruang Ngaji.\nEmail: ${window.currentUser?.email || ''}\nPaket: ${a} Poin (Rp ${p.toLocaleString('id-ID')})`)}`;
+            document.getElementById('topup-view-selection').style.display = 'none';
+            document.getElementById('topup-view-transfer').style.display = 'block';
+        };
+        window.showTopUpSelection = () => {
+            document.getElementById('topup-view-selection').style.display = 'block';
+            document.getElementById('topup-view-transfer').style.display = 'none';
+        };
+
+        // ==============================
+        // MODAL KISI-KISI
+        // ==============================
+        window.openHintOfferModal = () => document.getElementById('hintOfferModal').classList.add('open');
+        window.closeHintOfferModal = () => document.getElementById('hintOfferModal').classList.remove('open');
+
+        async function initAuthApp() {
+            try {
+                const userCredential = await signInAnonymously(auth);
+                window.currentUser = userCredential.user;
+            } catch (error) { console.error("Auth Error:", error); }
+        }
+
+        // ==============================
+        // PANTAU STATUS LOGIN
+        // ==============================
+        onAuthStateChanged(auth, (user) => {
+            const gate = document.getElementById('loginGate');
+            if (user && user.isAnonymous === false) { 
+                if (gate) gate.classList.add('hidden');
+                window.currentUser = user;
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'registration');
+                if (window.unsubscribeRealtime) window.unsubscribeRealtime();
+                window.unsubscribeRealtime = onSnapshot(docRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        window.userTokens = data.tokens ?? 10;
+                        window.firestoreUsername = data.username || "";
+                        window.firestoreAddress = data.address || "";
+                        window.firestoreWhatsapp = data.whatsapp || data.phone || "";
+                        window.firestorePhotoURL = data.photoURL || "";
+                    }
+                    window.renderAuthWidget();
+                });
+            } else if (user && user.isAnonymous) {
+                if (gate) gate.classList.remove('hidden');
+                window.currentUser = user;
+                window.renderAuthWidget();
+            } else {
+                if (gate) gate.classList.remove('hidden');
+                window.currentUser = null; window.userTokens = 0;
+                window.firestoreUsername = ""; window.firestoreAddress = "";
+                window.firestoreWhatsapp = ""; window.firestorePhotoURL = "";
+                if (window.unsubscribeRealtime) { window.unsubscribeRealtime(); window.unsubscribeRealtime = null; }
+                window.renderAuthWidget();
+                initAuthApp();
+            }
+        });
+
+        // ==============================
+        // KODE LATIHAN
+        // ==============================
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+            let currentMode = 'ujian';
+            let peekedWords = new Set();
+            let isHintActive = false;
+            let hasPurchasedUnlimitedHints = false;
+
+            const modeUjianBtn = document.getElementById('modeUjianBtn');
+            const peekHintBtn = document.getElementById('peekHintBtn');
+            const currentQuizOptionsContainer = document.getElementById('currentQuizOptions');
+            const tebakCaraBacaSection = document.getElementById('tebak-cara-baca-section');
+            const guessWordContainers = Array.from(tebakCaraBacaSection.querySelectorAll('.guess-word'));
+            const resetGameBtn = document.getElementById('resetGameBtn');
+            const menuDropdownBtn = document.getElementById('menuDropdownBtn');
+            const menuDropdownContent = document.getElementById('menuDropdownContent');
+            const showResultBtn = document.getElementById('showResultBtn');
+            const quizInteractionArea = document.getElementById('quizInteractionArea');
+            const deleteAnswerContainer = document.getElementById('deleteAnswerContainer');
+            const deleteAnswerBtn = document.getElementById('deleteAnswerBtn');
+            const tutorialModal = document.getElementById('tutorialModal');
+            const unfinishedModal = document.getElementById('unfinishedModal');
+            const progressContainer = document.getElementById('progressContainer');
+            const titleDisplay = document.getElementById('materialTitleDisplay');
+            const tutorialText = document.getElementById('tutorialText');
+
+            let answeredWords = new Set();
+            let currentQuizWordElement = null;
+            let totalWords = guessWordContainers.length;
+            const sessionShuffledOptions = new Map();
+            const baseTitleText = titleDisplay.textContent.trim().replace(/\s*-\s*Mode.*$/, '').replace(/\s*\|\s*Mode.*$/, '');
+
+            function setHintBtnFree(text) { 
+                if (peekHintBtn) {
+                    peekHintBtn.disabled = false; 
+                    peekHintBtn.className = "w-full bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold py-2 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm border border-amber-200"; 
+                    peekHintBtn.innerHTML = text; 
+                }
+            }
+
+            function setHintBtnPaid(text) { 
+                if (peekHintBtn) {
+                    peekHintBtn.disabled = false; 
+                    peekHintBtn.className = "w-full bg-teal-100 hover:bg-teal-200 text-teal-700 font-bold py-2 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm border border-teal-200"; 
+                    peekHintBtn.innerHTML = text; 
+                }
+            }
+
+            // ==============================
+            // SUBMIT KE FIRESTORE (REVISI LOGIC)
+            // ==============================
+            async function submitToFirestore() {
+                const studentName = window.firestoreUsername ||
+                    (window.currentUser?.email?.split('@')[0]) || "Peserta";
+                showResultBtn.disabled = true;
+                showResultBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Memeriksa...</span>';
+
+                try {
+                    // --- PENJAGA PINTU: CEK STATUS GEMBOK KELAS DARI ADMIN ---
+                    let classCollection = 'active_classes';
+                    if (MATERIAL_ID.startsWith('TJ') || MATERIAL_ID.includes('TAFSIR')) {
+                        classCollection = 'active_classes_tafsir';
+                    }
+                    
+                    const classRef = doc(db, 'artifacts', appId, 'public', 'data', classCollection, MATERIAL_ID);
+                    const classSnap = await getDoc(classRef);
+                    
+                    if (classSnap.exists() && classSnap.data().locked === true) {
+                        window.showToast("Maaf, waktu pengerjaan telah habis. Materi sudah dikunci oleh Admin.", "#c62828");
+                        showResultBtn.disabled = false;
+                        showResultBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>';
+                        return; // Hentikan pengiriman secara total!
+                    }
+                    // ---------------------------------------------------------
+
+                    // Hitung jawaban murni (Kecocokan exact Arab)
+                    let correct = 0, incorrect = 0, responses = [];
+                    guessWordContainers.forEach(container => {
+                        const span = container.querySelector('.arabic-text');
+                        const choice = span.dataset.chosenVocalization || "";
+                        const correctVoc = (container.dataset.correctVocalization || "").trim();
+                        const isCorrect = window.normalizeArabic(choice) === window.normalizeArabic(correctVoc);
+
+                        if (isCorrect) correct++; else incorrect++;
+                        responses.push({
+                            unvocalized: container.dataset.unvocalized,
+                            choice, isCorrect,
+                            correctVocalization: container.dataset.correctVocalization || "",
+                            irab: container.dataset.irab || "",
+                            translation: container.dataset.translation || ""
+                        });
+                    });
+                    const rawScore = totalWords > 0 ? Math.round((correct / totalWords) * 100) : 0;
+
+                    // Cek apakah peserta sudah pernah kirim materi ini sebelumnya
+                    const submissionsRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+                    const q = query(
+                        submissionsRef,
+                        where('studentId', '==', window.currentUser.uid),
+                        where('materialId', '==', MATERIAL_ID)
+                    );
+                    const existingSnap = await getDocs(q);
+
+                    // Jika sudah pernah kirim sebelumnya
+                    if (!existingSnap.empty) {
+                        const existingDoc = existingSnap.docs[0];
+                        const existingData = existingDoc.data();
+
+                        // Cek apakah sudah dikoreksi guru
+                        if (existingData.isCorrected === true) {
+                            const konfirmasi = confirm(
+                                "⚠️ Latihan ini sudah pernah dikoreksi oleh Guru.\n\n" +
+                                "Apakah kamu tetap ingin merevisi dan mengirim ulang?\n" +
+                                "(Biaya: 2 Poin akan dipotong)"
+                            );
+                            if (!konfirmasi) {
+                                showResultBtn.disabled = false;
+                                showResultBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>';
+                                return;
+                            }
+                        } else {
+                            // Belum dikoreksi guru (Ini adalah REMEDIAL)
+                            const konfirmasi = confirm(
+                                "📝 Kamu mengulang materi ini. Skor kamu sebelumnya adalah " + (existingData.score || 0) + ".\n\n" +
+                                "Sesuai aturan sertifikasi, nilai maksimal untuk Remedial adalah 85.\n" +
+                                "Apakah kamu yakin ingin merevisi jawaban?\n" +
+                                "(Biaya: 2 Poin akan dipotong)"
+                            );
+                            if (!konfirmasi) {
+                                showResultBtn.disabled = false;
+                                showResultBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>';
+                                return;
+                            }
+                        }
+
+                        // Capping Skor Maksimal 85 untuk Remedial
+                        let finalScore = rawScore;
+                        if (finalScore > 85) finalScore = 85;
+
+                        // Peserta setuju revisi — update dokumen lama
+                        showResultBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Merevisi...</span>';
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submissions', existingDoc.id), {
+                            studentName,
+                            studentClass: MATERIAL_ID,
+                            studentId: window.currentUser.uid,
+                            studentEmail: window.currentUser.email || "",
+                            address: window.firestoreAddress || "",
+                            whatsapp: window.firestoreWhatsapp || "",
+                            phone: window.firestoreWhatsapp || "",
+                            materialId: MATERIAL_ID,
+                            score: finalScore, // Pakai skor yang didiskon
+                            correct, incorrect, responses,
+                            timestamp: serverTimestamp(),
+                            isCorrected: false,  // Reset status koreksi karena sudah direvisi
+                            isRemedial: true     // Penanda ini hasil remedial
+                        });
+
+                        // Potong poin
+                        const regRef = doc(db, 'artifacts', appId, 'users',
+                            window.currentUser.uid, 'data', 'registration');
+                        await updateDoc(regRef, { tokens: increment(-1) });
+
+                        window.showToast("Revisi berhasil dikirim ke Guru! (Skor: " + finalScore + ")", "#25D366");
+                        showResultBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Terkirim</span>';
+                    } else {
+                        // Belum pernah kirim — addDoc seperti biasa (FIRST ATTEMPT, tidak ada cap 85)
+                        showResultBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengirim...</span>';
+                        await addDoc(submissionsRef, {
+                            studentName,
+                            studentClass: MATERIAL_ID,
+                            studentId: window.currentUser.uid,
+                            studentEmail: window.currentUser.email || "",
+                            address: window.firestoreAddress || "",
+                            whatsapp: window.firestoreWhatsapp || "",
+                            phone: window.firestoreWhatsapp || "",
+                            materialId: MATERIAL_ID,
+                            score: rawScore, // Raw score murni percobaan pertama
+                            correct, incorrect, responses,
+                            timestamp: serverTimestamp(),
+                            isCorrected: false
+                        });
+
+                        // Potong poin
+                        const regRef = doc(db, 'artifacts', appId, 'users',
+                            window.currentUser.uid, 'data', 'registration');
+                        await updateDoc(regRef, { tokens: increment(-1) });
+
+                        window.showToast("Hasil berhasil dikirim ke Guru! (Skor: " + rawScore + ")", "#25D366");
+                        showResultBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Terkirim</span>';
+                    }
+                    
+                    const correctionLinkBox = document.getElementById('correctionLinkBox');
+                    if (correctionLinkBox) correctionLinkBox.classList.remove('hidden');
+
+                } catch (e) {
+                    window.showToast("Gagal mengirim: " + e.message, "#c62828");
+                    showResultBtn.disabled = false;
+                    showResultBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>';
+                }
+            }
+
+            // UI MODE
+            function applyModeUI() {
+                if (currentMode === 'belajar') {
+                    document.body.classList.add('irab-enabled', 'translation-enabled');
+                    progressContainer.classList.add('hidden');
+                    titleDisplay.innerHTML = `${baseTitleText} - Mode Belajar`;
+                    tutorialText.innerHTML = "Klik pada setiap kata untuk melihat <b>I'rab dan Terjemahnya</b>.";
+                    modeUjianBtn.innerHTML = '<i class="fas fa-edit"></i> <span>Mode Latihan</span>';
+                    modeUjianBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    modeUjianBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+                    showResultBtn.classList.add('hidden');
+                } else {
+                    document.body.classList.remove('irab-enabled', 'translation-enabled');
+                    progressContainer.classList.remove('hidden');
+                    titleDisplay.innerHTML = `${baseTitleText} - Mode Latihan`;
+                    tutorialText.innerHTML = "Gunakan penunjuk 👈 untuk menjawab soal.<br><br><b>Kisi-Kisi:</b> 3x gratis, selanjutnya gunakan poin untuk unlimited.";
+                    modeUjianBtn.innerHTML = '<i class="fas fa-graduation-cap"></i> <span>Mode Belajar</span>';
+                    modeUjianBtn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                    modeUjianBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    showResultBtn.classList.remove('hidden');
+                }
+            }
+            applyModeUI();
+
+            menuDropdownBtn.onclick = (e) => { e.stopPropagation(); menuDropdownContent.classList.toggle('hidden'); };
+            modeUjianBtn.onclick = () => { currentMode = currentMode === 'belajar' ? 'ujian' : 'belajar'; applyModeUI(); resetGameBtn.click(); };
+
+            showResultBtn.onclick = () => {
+                if (answeredWords.size === 0) { unfinishedModal.classList.add('open'); return; }
+                if (!window.currentUser || window.currentUser.isAnonymous) { window.redirectToLogin(); return; }
+                if (!window.firestoreAddress) { window.showToast("Harap isi alamat di halaman akun Anda.", "#ef6c00"); setTimeout(() => window.location.href = LOGIN_URL, 1200); return; }
+                if (!window.firestoreWhatsapp) { window.showToast("Harap isi nomor WhatsApp di halaman akun Anda.", "#ef6c00"); setTimeout(() => window.location.href = LOGIN_URL, 1200); return; }
+                if (window.userTokens < 2) { window.showToast("Poin tidak cukup (Butuh 2 Poin). Silakan isi ulang.", "#c62828"); document.getElementById('zoomTopupModal').classList.add('open'); return; }
+                
+                hideQuizArea(); submitToFirestore();
+                menuDropdownContent.classList.add('hidden');
+            };
+
+            resetGameBtn.onclick = () => {
+                answeredWords.clear(); peekedWords.clear();
+                isHintActive = false; hasPurchasedUnlimitedHints = false;
+                guessWordContainers.forEach(container => {
+                    container.classList.remove('answered', 'active-word', 'force-show-tooltips', 'show-tooltips');
+                    const span = container.querySelector('.arabic-text');
+                    span.classList.remove('answered-word', 'correct-guess', 'incorrect-guess', 'unanswered-neutral');
+                    span.textContent = container.dataset.unvocalized;
+                    delete span.dataset.chosenVocalization;
+                });
+                hideQuizArea(); hideActiveTooltips();
+                if (currentMode === 'ujian') { 
+                    setHintBtnFree('<i class="fas fa-eye"></i> Lihat Kisi-Kisi'); 
+                    updateScoreDisplay(); 
+                    updateActiveWordMarker(true); 
+                }
+                showResultBtn.disabled = false;
+                showResultBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Kirim Jawaban</span>';
+            };
+
+            document.getElementById('showTutorialBtn').onclick = () => tutorialModal.classList.add('open');
+            document.getElementById('closeTutorialBtn').onclick = () => tutorialModal.classList.remove('open');
+            document.getElementById('closeUnfinishedBtn').onclick = () => unfinishedModal.classList.remove('open');
+
+            function updateScoreDisplay() {
+                if (currentMode !== 'ujian') return;
+                const pct = totalWords > 0 ? Math.round((answeredWords.size / totalWords) * 100) : 0;
+                document.getElementById('progressBar').style.width = pct + '%';
+                document.getElementById('progressText').textContent = `${pct}% (${answeredWords.size}/${totalWords})`;
+            }
+
+            function updateActiveWordMarker(shouldScroll = false) {
+                if (currentMode !== 'ujian') return;
+                document.querySelectorAll('.resume-marker').forEach(el => { el.classList.remove('resume-marker'); el.removeAttribute('data-marker-text'); });
+                const firstIdx = guessWordContainers.findIndex(c => !c.classList.contains('answered'));
+                if (firstIdx !== -1) {
+                    const target = guessWordContainers[firstIdx];
+                    target.classList.add('resume-marker');
+                    target.setAttribute('data-marker-text', shouldScroll ? '👈 Mulai' : '👈');
+                    if (shouldScroll) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+                }
+            }
+
+            function hideQuizArea() { quizInteractionArea.classList.remove('active'); if (currentQuizWordElement) currentQuizWordElement.classList.remove('active-word'); currentQuizWordElement = null; }
+            
+            function hideActiveTooltips() {
+                document.querySelectorAll('.tooltip-container.show-tooltips, .tooltip-container.force-show-tooltips').forEach(el => {
+                    el.classList.remove('show-tooltips', 'force-show-tooltips');
+                    if (currentMode === 'belajar') { const span = el.querySelector('.arabic-text'); span.textContent = el.dataset.unvocalized; span.classList.remove('answered-word'); el.classList.remove('answered'); }
+                });
+                isHintActive = false;
+            }
+
+            function handleOptionClick(clickedButton) {
+                if (!currentQuizWordElement || currentMode === 'belajar' || isHintActive) return;
+                const userChoice = clickedButton.textContent;
+                const span = currentQuizWordElement.querySelector('.arabic-text');
+                currentQuizWordElement.classList.remove('active-word');
+                span.classList.remove('correct-guess', 'incorrect-guess', 'unanswered-neutral');
+                span.classList.add('answered-word');
+                span.dataset.chosenVocalization = userChoice;
+                const unvocalized = currentQuizWordElement.dataset.unvocalized;
+                const fm = unvocalized.match(/[\u0621-\u064A]/);
+                const lm = unvocalized.match(/[\u0621-\u064A](?!.*[\u0621-\u064A])/);
+                let prefix = fm ? unvocalized.substring(0, fm.index) : '';
+                let suffix = lm ? unvocalized.substring(lm.index + 1) : unvocalized;
+                span.textContent = prefix + userChoice + suffix;
+                answeredWords.add(currentQuizWordElement);
+                currentQuizWordElement.classList.add('answered');
+                currentQuizOptionsContainer.querySelectorAll('button').forEach(b => b.disabled = true);
+                updateScoreDisplay(); updateActiveWordMarker();
+                const nextIdx = guessWordContainers.findIndex(c => !c.classList.contains('answered'));
+                if (nextIdx !== -1) setTimeout(() => showQuizOptions(guessWordContainers[nextIdx]), 400);
+                else hideQuizArea();
+            }
+
+            function showQuizOptions(container) {
+                if (currentMode !== 'ujian') return;
+                if (currentQuizWordElement) currentQuizWordElement.classList.remove('active-word', 'force-show-tooltips');
+                isHintActive = false;
+                currentQuizWordElement = container;
+                container.classList.add('active-word');
+                const isAnswered = container.classList.contains('answered');
+                const options = sessionShuffledOptions.get(container);
+                currentQuizOptionsContainer.innerHTML = '';
+                peekHintBtn.classList.remove('hidden');
+                options.forEach(opt => { const btn = document.createElement('button'); btn.textContent = opt; btn.disabled = isAnswered; btn.onclick = () => handleOptionClick(btn); currentQuizOptionsContainer.appendChild(btn); });
+                
+                if (isAnswered) {
+                    deleteAnswerContainer.classList.remove('hidden');
+                    document.getElementById('hintActionArea').classList.add('hidden');
+                    deleteAnswerBtn.onclick = () => {
+                        const span = currentQuizWordElement.querySelector('.arabic-text');
+                        answeredWords.delete(currentQuizWordElement);
+                        currentQuizWordElement.classList.remove('answered', 'active-word');
+                        span.classList.remove('correct-guess', 'incorrect-guess', 'unanswered-neutral', 'answered-word');
+                        span.className = 'arabic-text';
+                        span.textContent = currentQuizWordElement.dataset.unvocalized;
+                        delete span.dataset.chosenVocalization;
+                        hideQuizArea(); updateScoreDisplay(); updateActiveWordMarker();
+                    };
+                } else {
+                    deleteAnswerContainer.classList.add('hidden');
+                    document.getElementById('hintActionArea').classList.remove('hidden');
+                    const isAlreadyPeeked = peekedWords.has(container);
+                    if (peekedWords.size >= 3 && !isAlreadyPeeked && !hasPurchasedUnlimitedHints) setHintBtnPaid('<i class="fas fa-key"></i> Aktifkan Kisi-Kisi');
+                    else setHintBtnFree('<i class="fas fa-eye"></i> Lihat Kisi-Kisi');
+                }
+                const rect = container.getBoundingClientRect();
+                const secRect = tebakCaraBacaSection.getBoundingClientRect();
+                quizInteractionArea.style.top = `${rect.bottom - secRect.top - 2}px`;
+                quizInteractionArea.style.left = `${rect.left - secRect.left + (rect.width / 2.3)}px`;
+                quizInteractionArea.style.transform = 'translateX(-50%)';
+                quizInteractionArea.classList.add('active');
+            }
+
+            if (peekHintBtn) {
+                peekHintBtn.onclick = async () => {
+                    if (!currentQuizWordElement || isHintActive) return;
+                    const isAlreadyPeeked = peekedWords.has(currentQuizWordElement);
+                    if (!isAlreadyPeeked && peekedWords.size >= 3 && !hasPurchasedUnlimitedHints) {
+                        if (!window.currentUser || window.currentUser.isAnonymous) { window.redirectToLogin(); return; }
+                        if (window.userTokens < 2) { window.showToast("Poin tidak cukup (Butuh 2 Poin).", "#c62828"); document.getElementById('zoomTopupModal').classList.add('open'); return; }
+                        window.openHintOfferModal(); return;
+                    }
+                    peekedWords.add(currentQuizWordElement);
+                    isHintActive = true;
+                    quizInteractionArea.classList.remove('active');
+                    currentQuizWordElement.classList.add('force-show-tooltips');
+                    if (peekedWords.size === 3 && !hasPurchasedUnlimitedHints) {
+                        setTimeout(() => {
+                            if (window.currentUser && !window.currentUser.isAnonymous) window.openHintOfferModal();
+                            else window.redirectToLogin();
+                        }, 1500);
+                    }
+                };
+            }
+
+            document.getElementById('confirmUnlockHintsBtn').onclick = async () => {
+                if (!window.currentUser || window.currentUser.isAnonymous) { window.closeHintOfferModal(); window.redirectToLogin(); return; }
+                if (window.userTokens < 2) { window.closeHintOfferModal(); window.showToast("Poin tidak cukup.", "#c62828"); document.getElementById('zoomTopupModal').classList.add('open'); return; }
+                const btn = document.getElementById('confirmUnlockHintsBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...'; btn.disabled = true;
+                try {
+                    const regRef = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'data', 'registration');
+                    await updateDoc(regRef, { tokens: increment(-2) });
+                    window.showToast("Berhasil membuka seluruh kisi-kisi!", "#25D366");
+                    hasPurchasedUnlimitedHints = true; window.closeHintOfferModal();
+                    setHintBtnFree('<i class="fas fa-eye"></i> Lihat Kisi-Kisi');
+                    if (currentQuizWordElement) { peekedWords.add(currentQuizWordElement); isHintActive = true; quizInteractionArea.classList.remove('active'); currentQuizWordElement.classList.add('force-show-tooltips'); }
+                } catch (err) { window.showToast("Gagal: " + err.message, "#c62828"); }
+                finally { btn.innerHTML = '<i class="fas fa-unlock"></i> Aktifkan'; btn.disabled = false; }
+            };
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#menuDropdownBtn') && !e.target.closest('#menuDropdownContent')) menuDropdownContent.classList.add('hidden');
+                const clickedWord = e.target.closest('.guess-word');
+                if (isHintActive && !e.target.closest('#peekHintBtn')) {
+                    hideActiveTooltips(); isHintActive = false;
+                    if (clickedWord && clickedWord === currentQuizWordElement) { quizInteractionArea.classList.add('active'); return; }
+                }
+                if (clickedWord && currentMode === 'belajar') { if (clickedWord.classList.contains('show-tooltips')) hideActiveTooltips(); else { hideActiveTooltips(); clickedWord.classList.add('show-tooltips'); } return; }
+                if (clickedWord && currentMode === 'ujian') {
+                    const isAnswered = clickedWord.classList.contains('answered');
+                    if (isAnswered) showQuizOptions(clickedWord);
+                    else { const idx = guessWordContainers.indexOf(clickedWord); const firstUnanswered = guessWordContainers.findIndex(c => !c.classList.contains('answered')); if (idx === firstUnanswered) showQuizOptions(clickedWord); }
+                    return;
+                }
+                if (!e.target.closest('#quizInteractionArea') && !clickedWord && !e.target.closest('.modal-content')) { hideQuizArea(); hideActiveTooltips(); }
+            });
+
+            // Init
+            guessWordContainers.forEach(c => {
+                const options = JSON.parse(c.dataset.options);
+                window.shuffleArray(options);
+                sessionShuffledOptions.set(c, options);
+                if (c.dataset.irab) { const t = document.createElement('span'); t.className = 'base-tooltip irab-tooltip'; t.textContent = c.dataset.irab; c.appendChild(t); }
+                if (c.dataset.translation) { const t = document.createElement('span'); t.className = 'base-tooltip translation-tooltip'; t.textContent = c.dataset.translation; c.appendChild(t); }
+            });
+
+            updateScoreDisplay();
+            updateActiveWordMarker(true);
+        });
+    </script>
+</body>
+</html>
